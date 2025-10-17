@@ -20,6 +20,6 @@ public class A01 {
         image.setPixel(x, y, circles.getColor(vec2(x, y)));
 
     // Write the image to disk.
-    image.writePng("images/a01.png");
+    image.writePng("a01");
   }
 }
