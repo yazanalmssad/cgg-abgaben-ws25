@@ -18,6 +18,7 @@ public class Image implements tools.Image {
 
     // Stores the RGB color components for one pixel addressed
     // by it's coordinates in the image.
+    @Override
     public void setPixel(int x, int y, Color color) {
         int index = (y * width + x) * 3;
         data[index] = color.r();
@@ -34,6 +35,7 @@ public class Image implements tools.Image {
 
     // Retrieves the RGB color components for one particular pixel addressed
     // by it's coordinates in the image.
+    @Override
     public Color getPixel(int x, int y) {
         int index = (y * width + x) * 3;
         return new Color(data[index], data[index + 1], data[index + 2]);
@@ -44,6 +46,7 @@ public class Image implements tools.Image {
         ImageWriter.writeHdr(name, data, width, height);
     }
  
+    @Override
     public int width() {
         // This is just a dummy value to make the compiler happy. This
         // needs to be adjusted such that the actual width of the Image is
@@ -51,6 +54,7 @@ public class Image implements tools.Image {
         return width;
     }
 
+    @Override
     public int height() {
         // This is just a dummy value to make the compiler happy. This
         // needs to be adjusted such that the actual height of the Image is

@@ -31,6 +31,7 @@ public class Circles implements Sampler{
         }
         circles.sort((c1, c2) -> Double.compare(c1.getRadius(), c2.getRadius()));
     }
+    @Override
     public Color getColor(Vec2 point){
         for (Circle circle : circles) {
             if (circle.coversPoint(point)) {
