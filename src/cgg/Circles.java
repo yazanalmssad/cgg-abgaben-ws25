@@ -26,7 +26,7 @@ public class Circles implements Sampler{
             double radius = 10 + (i * 15);
 
             Color color = new Color((double) col / gridSize, (double) row / gridSize, 0.8);
-            //
+            
             circles.add(new Circle(new Vec2(x, y), radius, color));
         }
         circles.sort((c1, c2) -> Double.compare(c1.getRadius(), c2.getRadius()));
