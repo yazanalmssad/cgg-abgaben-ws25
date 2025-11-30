@@ -3,7 +3,7 @@ package cgg;
 import tools.*;
 import static tools.Functions.*;
 
-public class Sphere {
+public class Sphere implements Shape {
     private final Vec3 center;
     private final double radius;
     private final Color color;
