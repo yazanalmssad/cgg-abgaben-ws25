@@ -185,6 +185,28 @@ public final class RayTracer implements Sampler {
         return result;
     }
 
+    public Color trace(Ray ray) {
+        Hit closestHit = null;
+
+        for (Shape shape : shapes) {
+            Hit hit = shape.intersect(ray);
+            if (hit != null && (closestHit == null || hit.t() < closestHit.t())) {
+                closestHit = hit;
+            }
+        }
+
+        if (closestHit == null) {
+            return Color.black;
+        }
+
+        return calculateLighting(closestHit);
+    }
+
+    private Color calculateLighting(Hit hit) {
+
+        return hit.material().baseColor(hit.uv());
+    }
+
     private boolean isVisible(Vec3 point, Vec3 lightDir, double maxDistance) {
         Vec3 offsetPoint = add(point, multiply(lightDir, EPSILON));
         Ray shadowRay = new Ray(offsetPoint, lightDir, EPSILON, maxDistance - EPSILON);
