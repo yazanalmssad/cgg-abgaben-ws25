@@ -11,11 +11,25 @@ public class Plane implements Shape {
     private final Type type;
     private final double size;
     private final Color color;
+    private final BoundingBox boundingBox;
 
     public Plane(Type type, double size, Color color) {
         this.type = type;
         this.size = size;
         this.color = color;
+        
+        if (type == Type.UNBOUNDED) {
+            this.boundingBox = BoundingBox.everything;
+        } else if (type == Type.CIRCULAR) {
+            Vec3 min = vec3(-size, -0.001, -size);
+            Vec3 max = vec3(size, 0.001, size);
+            this.boundingBox = new BoundingBox(min, max);
+        } else { // SQUARE
+            double halfSize = size / 2;
+            Vec3 min = vec3(-halfSize, -0.001, -halfSize);
+            Vec3 max = vec3(halfSize, 0.001, halfSize);
+            this.boundingBox = new BoundingBox(min, max);
+        }
     }
 
     public Plane(Color color) {
@@ -23,8 +37,12 @@ public class Plane implements Shape {
     }
 
     @Override
-    public Hit intersect(Ray ray) {
+    public BoundingBox boundingBox() {
+        return boundingBox;
+    }
 
+    @Override
+    public Hit intersect(Ray ray) {
         if (Math.abs(ray.direction().y()) < 1e-6) {
             return null;
         }
@@ -41,7 +59,6 @@ public class Plane implements Shape {
         }
 
         Vec3 normal = vec3(0, 1, 0);
-
         if (dot(normal, ray.direction()) > 0) {
             normal = negate(normal);
         }

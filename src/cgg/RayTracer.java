@@ -108,11 +108,11 @@ package cgg;
 
 import cgg.LightSource.LightInfo;
 import java.util.List;
+import java.util.stream.IntStream;
 import tools.*;
 import static tools.Functions.*;
 
 public final class RayTracer implements Sampler {
-
     private final SimpleCamera camera;
     private final List<? extends Shape> shapes;
     private final List<LightSource> lights;
@@ -134,6 +134,22 @@ public final class RayTracer implements Sampler {
         }
 
         return shade(hit);
+    }
+
+    /**
+     * PARALLELE RENDERING-METHODE für Aufgabe 7.1
+     */
+    public Color[][] renderParallel(int width, int height) {
+        Color[][] image = new Color[height][width];
+        
+        IntStream.range(0, height).parallel().forEach(y -> {
+            for (int x = 0; x < width; x++) {              
+                Vec2 pixel = new Vec2(x + 0.5, y + 0.5);
+                image[y][x] = getColor(pixel);
+            }
+        });
+        
+        return image;
     }
 
     private Hit findClosestHit(Ray ray) {
@@ -158,7 +174,6 @@ public final class RayTracer implements Sampler {
         double k_e = 50.0;
 
         Color result = k_a;
-
         Vec3 viewDir = normalize(negate(hit.point()));
 
         for (LightSource light : lights) {
@@ -183,28 +198,6 @@ public final class RayTracer implements Sampler {
         }
 
         return result;
-    }
-
-    public Color trace(Ray ray) {
-        Hit closestHit = null;
-
-        for (Shape shape : shapes) {
-            Hit hit = shape.intersect(ray);
-            if (hit != null && (closestHit == null || hit.t() < closestHit.t())) {
-                closestHit = hit;
-            }
-        }
-
-        if (closestHit == null) {
-            return Color.black;
-        }
-
-        return calculateLighting(closestHit);
-    }
-
-    private Color calculateLighting(Hit hit) {
-
-        return hit.material().baseColor(hit.uv());
     }
 
     private boolean isVisible(Vec3 point, Vec3 lightDir, double maxDistance) {

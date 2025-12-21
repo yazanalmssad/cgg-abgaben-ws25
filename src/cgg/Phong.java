@@ -1,7 +1,6 @@
 package cgg;
 
 import tools.*;
-import static tools.Functions.*;
 
 public class Phong implements Material {
     private final Color baseColor;

@@ -54,17 +54,36 @@ public class Sphere implements Shape {
     private final Vec3 center;
     private final double radius;
     private final Material material;
+    private final BoundingBox boundingBox;
 
     public Sphere(Vec3 center, double radius, Material material) {
         this.center = center;
         this.radius = radius;
         this.material = material;
+        
+        Vec3 min = vec3(
+            center.x() - radius,
+            center.y() - radius,
+            center.z() - radius
+        );
+        Vec3 max = vec3(
+            center.x() + radius,
+            center.y() + radius,
+            center.z() + radius
+        );
+        this.boundingBox = new BoundingBox(min, max);
     }
 
     public Sphere(Vec3 center, double radius, Color color) {
         this(center, radius, new Phong(color, Color.white, 10.0));
     }
 
+    @Override
+    public BoundingBox boundingBox() {
+        return boundingBox;
+    }
+
+    @Override
     public Hit intersect(Ray ray) {
         Vec3 oc = subtract(ray.origin(), center);
 

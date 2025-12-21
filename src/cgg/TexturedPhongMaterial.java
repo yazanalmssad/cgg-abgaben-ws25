@@ -1,7 +1,6 @@
 package cgg;
 
 import tools.*;
-import static tools.Functions.*;
 
 public class TexturedPhongMaterial implements Material {
     private final Sampler baseColorSampler;
