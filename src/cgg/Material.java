@@ -7,4 +7,5 @@ public interface Material {
     Color specularColor(Vec2 uv);
     double shininess(Vec2 uv);
     double reflectivity(Vec2 uv);
+    Scatter scatter(Ray ray, Hit hit);
 }

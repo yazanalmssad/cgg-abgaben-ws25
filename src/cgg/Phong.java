@@ -32,4 +32,9 @@ public class Phong implements Material {
     public double reflectivity(Vec2 uv) {
         return 0.0; // Keine Reflexion in Ihrer Version
     }
+
+    @Override
+    public Scatter scatter(Ray ray, Hit hit) {
+        return null;
+    }
 }

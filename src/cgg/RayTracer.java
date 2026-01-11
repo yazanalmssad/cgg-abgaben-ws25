@@ -117,6 +117,7 @@ public final class RayTracer implements Sampler {
     private final List<? extends Shape> shapes;
     private final List<LightSource> lights;
     private static final double EPSILON = 1e-5;
+    private static final int MAX_DEPTH = 7;
 
     public RayTracer(SimpleCamera camera, List<? extends Shape> shapes, List<LightSource> lights) {
         this.camera = camera;
@@ -127,13 +128,7 @@ public final class RayTracer implements Sampler {
     @Override
     public Color getColor(Vec2 pixel) {
         Ray ray = camera.generateRay(pixel);
-        Hit hit = findClosestHit(ray);
-
-        if (hit == null) {
-            return Color.black;
-        }
-
-        return shade(hit);
+        return trace(ray, 0);
     }
 
     /**
@@ -166,15 +161,38 @@ public final class RayTracer implements Sampler {
         return closestHit;
     }
 
-    private Color shade(Hit hit) {
-        Color C = hit.color();
-        Color k_a = multiply(0.1, C);
-        Color k_d = multiply(0.6, C);
-        Color k_s = color(1.0, 1.0, 1.0);
-        double k_e = 50.0;
+    private Color trace(Ray ray, int depth) {
+        if (depth >= MAX_DEPTH) {
+            return Color.black;
+        }
+
+        Hit hit = findClosestHit(ray);
+        if (hit == null) {
+            return Color.black;
+        }
+
+        Color local = shade(hit, ray);
+        Scatter scatter = hit.material().scatter(ray, hit);
+        if (scatter == null) {
+            return local;
+        }
+
+        Color bounced = trace(scatter.ray(), depth + 1);
+        Color reflected = multiply(scatter.attenuation(), bounced);
+        return add(local, reflected);
+    }
+
+    private Color shade(Hit hit, Ray ray) {
+        Material material = hit.material();
+        Vec2 uv = hit.uv();
+        Color base = material.baseColor(uv);
+        Color k_a = multiply(0.1, base);
+        Color k_d = multiply(0.6, base);
+        Color k_s = material.specularColor(uv);
+        double k_e = material.shininess(uv);
 
         Color result = k_a;
-        Vec3 viewDir = normalize(negate(hit.point()));
+        Vec3 viewDir = normalize(negate(ray.direction()));
 
         for (LightSource light : lights) {
             LightInfo lightInfo = light.info(hit.point());
