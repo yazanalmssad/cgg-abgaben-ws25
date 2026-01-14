@@ -45,6 +45,14 @@ public class Image implements tools.Image {
         //System.out.format("Implement function `cgg.Image.writeHdr` to actually write image `%s`\n", name);
         ImageWriter.writeHdr(name, data, width, height);
     }
+
+    public void sample(Sampler sampler) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                setPixel(x, y, sampler.getColor(new Vec2(x, y)));
+            }
+        }
+    }
  
     @Override
     public int width() {
